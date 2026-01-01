@@ -1,0 +1,62 @@
+.sector-table {
+  padding: 20px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  margin-bottom: 20px;
+}
+
+.sector-table h2 {
+  margin-top: 0;
+  font-size: 20px;
+  margin-bottom: 15px;
+}
+
+.sector-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.sector-table th {
+  text-align: left;
+  padding: 10px;
+  border-bottom: 2px solid #dee2e6;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.sector-table td {
+  padding: 10px;
+  border-bottom: 1px solid #e9ecef;
+  font-size: 14px;
+}
+
+.sector-name {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.sector-symbol {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.sector-full-name {
+  font-size: 12px;
+  color: #666;
+}
+
+.positive {
+  color: #28a745;
+  font-weight: 600;
+}
+
+.negative {
+  color: #dc3545;
+  font-weight: 600;
+}
+
+.neutral {
+  color: #6c757d;
+}
