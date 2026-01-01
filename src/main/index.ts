@@ -5,6 +5,9 @@ import { setupIpcHandlers } from './ipc-handlers';
 
 dotenv.config({ path: path.join(__dirname, '../../.env') });
 
+// Disable GPU acceleration to fix VSync errors on some Linux systems
+app.disableHardwareAcceleration();
+
 let mainWindow: BrowserWindow | null = null;
 
 function createWindow(): void {
