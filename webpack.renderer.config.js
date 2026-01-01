@@ -4,7 +4,7 @@ const webpack = require('webpack');
 
 module.exports = {
   entry: './src/renderer/index.tsx',
-  target: 'electron-renderer',
+  target: 'web',
   module: {
     rules: [
       {
@@ -31,7 +31,10 @@ module.exports = {
     })
   ],
   resolve: {
-    extensions: ['.tsx', '.ts', '.js']
+    extensions: ['.tsx', '.ts', '.js'],
+    fallback: {
+      "events": false
+    }
   },
   devServer: {
     static: {
