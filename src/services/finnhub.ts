@@ -56,9 +56,6 @@ function delay(ms: number): Promise<void> {
 
 export async function getSectorPerformance(): Promise<SectorData[]> {
   const now = Math.floor(Date.now() / 1000);
-  const day1Ago = now - (1 * 24 * 60 * 60);
-  const day5Ago = now - (5 * 24 * 60 * 60);
-  const day10Ago = now - (10 * 24 * 60 * 60);
   const day30Ago = now - (30 * 24 * 60 * 60);
 
   const results: SectorData[] = [];

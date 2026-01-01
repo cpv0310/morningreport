@@ -3,7 +3,7 @@ import { useWatchlist } from '../../hooks/useMarketData';
 import './Watchlist.css';
 
 export default function Watchlist() {
-  const { watchlistData, tickers, loading, addStock, removeStock } = useWatchlist();
+  const { watchlistData, loading, addStock, removeStock } = useWatchlist();
   const [newTicker, setNewTicker] = useState('');
   const [showAddModal, setShowAddModal] = useState(false);
 
