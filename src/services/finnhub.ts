@@ -140,13 +140,12 @@ export async function getStockQuotes(symbols: string[]): Promise<WatchlistItem[]
 export async function getEconomicEvents(): Promise<EconomicEvent[]> {
   try {
     const now = new Date();
-    const endOfWeek = new Date(now);
-    endOfWeek.setDate(now.getDate() + (7 - now.getDay()));
+    const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
 
     const formatDate = (date: Date) => date.toISOString().split('T')[0];
 
     const data: any = await makeRequest(
-      `/calendar/economic?from=${formatDate(now)}&to=${formatDate(endOfWeek)}`
+      `/calendar/economic?from=${formatDate(now)}&to=${formatDate(endOfMonth)}`
     );
 
     if (data.economicCalendar && Array.isArray(data.economicCalendar)) {

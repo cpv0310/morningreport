@@ -10,12 +10,12 @@ export default function EconomicEvents() {
   }
 
   if (!eventData || eventData.events.length === 0) {
-    return <div className="economic-events">No economic events this week</div>;
+    return <div className="economic-events">No economic events this month</div>;
   }
 
   return (
     <div className="economic-events">
-      <h2>Economic Events This Week</h2>
+      <h2>Economic Events This Month</h2>
       <div className="events-list">
         {eventData.events.map((event, index) => (
           <div key={index} className={`event-card impact-${event.impact}`}>
