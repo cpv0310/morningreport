@@ -13,7 +13,8 @@
       "Bash(npm run build:renderer:*)",
       "Bash(npm run dev:*)",
       "Bash(lsof:*)",
-      "Bash(xargs kill -9:*)"
+      "Bash(xargs kill -9:*)",
+      "Bash(pkill:*)"
     ]
   }
 }
