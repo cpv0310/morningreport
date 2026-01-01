@@ -10,7 +10,10 @@
       "Bash(npm run build:*)",
       "Bash(npm run build:main:*)",
       "Bash(git push:*)",
-      "Bash(npm run build:renderer:*)"
+      "Bash(npm run build:renderer:*)",
+      "Bash(npm run dev:*)",
+      "Bash(lsof:*)",
+      "Bash(xargs kill -9:*)"
     ]
   }
 }
