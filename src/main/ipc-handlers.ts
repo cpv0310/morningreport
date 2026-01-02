@@ -1,5 +1,6 @@
 import { ipcMain, BrowserWindow } from 'electron';
-import { getSectorPerformance, getStockQuotes, getEconomicEvents, getMarketNews } from '../services/yahoo-finance';
+import { getSectorPerformance, getStockQuotes, getMarketNews } from '../services/yahoo-finance';
+import { getEconomicEvents } from '../services/fmp';
 import { cache } from '../services/cache';
 
 const CACHE_TTL = {

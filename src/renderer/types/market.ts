@@ -5,6 +5,7 @@ export interface SectorData {
   day5: number;
   day10: number;
   day30: number;
+  marketCap?: number;
 }
 
 export interface StockQuote {

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useWatchlist } from '../../hooks/useMarketData';
+import SparkLine from '../SparkLine/SparkLine';
 import './Watchlist.css';
 
 export default function Watchlist() {
@@ -13,10 +14,6 @@ export default function Watchlist() {
       setNewTicker('');
       setShowAddModal(false);
     }
-  };
-
-  const formatNumber = (num: number) => {
-    return num.toLocaleString();
   };
 
   const formatPrice = (price: number) => {
@@ -60,7 +57,7 @@ export default function Watchlist() {
             <th>Symbol</th>
             <th>Price</th>
             <th>Change</th>
-            <th>Volume</th>
+            <th>Volume (5d)</th>
             <th>RSI (14)</th>
             <th></th>
           </tr>
@@ -68,12 +65,23 @@ export default function Watchlist() {
         <tbody>
           {watchlistData?.stocks.map((stock) => (
             <tr key={stock.symbol}>
-              <td className="stock-symbol">{stock.symbol}</td>
+              <td className="stock-symbol">
+                <a
+                  href={`https://www.tradingview.com/symbols/${stock.symbol}/`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="ticker-link"
+                >
+                  {stock.symbol}
+                </a>
+              </td>
               <td>{formatPrice(stock.currentPrice)}</td>
               <td className={stock.change >= 0 ? 'positive' : 'negative'}>
                 {stock.change >= 0 ? '+' : ''}{stock.change.toFixed(2)} ({stock.changePercent.toFixed(2)}%)
               </td>
-              <td>{formatNumber(stock.volume)}</td>
+              <td>
+                <SparkLine data={stock.volumeHistory || []} width={100} height={30} />
+              </td>
               <td className={
                 stock.rsi === undefined ? '' :
                 stock.rsi > 70 ? 'rsi-overbought' :

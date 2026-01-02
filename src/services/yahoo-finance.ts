@@ -64,7 +64,8 @@ export async function getSectorPerformance(): Promise<SectorData[]> {
           day1: getReturn(1),
           day5: getReturn(5),
           day10: getReturn(10),
-          day30: getReturn(30)
+          day30: getReturn(30),
+          marketCap: quote.marketCap || 0
         });
       }
     } catch (error) {
@@ -75,7 +76,8 @@ export async function getSectorPerformance(): Promise<SectorData[]> {
         day1: 0,
         day5: 0,
         day10: 0,
-        day30: 0
+        day30: 0,
+        marketCap: 0
       });
     }
   }
@@ -96,6 +98,30 @@ export async function getStockQuotes(symbols: string[]): Promise<WatchlistItem[]
       const quote: any = await yahooFinance.quote(symbol);
       await delay(500);
 
+      // Fetch last 5 days of volume data
+      const startDate = subDays(new Date(), 7); // Get 7 days to ensure we have at least 5 trading days
+      const endDate = new Date();
+
+      let volumeHistory: number[] = [];
+      try {
+        const historical: any = await yahooFinance.historical(symbol, {
+          period1: startDate,
+          period2: endDate,
+          interval: '1d'
+        });
+        await delay(500);
+
+        if (historical && historical.length > 0) {
+          // Get last 5 days of volume, sorted by date
+          volumeHistory = historical
+            .sort((a: any, b: any) => a.date.getTime() - b.date.getTime())
+            .slice(-5)
+            .map((day: any) => day.volume || 0);
+        }
+      } catch (histError) {
+        console.error(`Error fetching volume history for ${symbol}:`, histError);
+      }
+
       results.push({
         symbol,
         currentPrice: quote.regularMarketPrice || 0,
@@ -103,7 +129,8 @@ export async function getStockQuotes(symbols: string[]): Promise<WatchlistItem[]
         volume: quote.regularMarketVolume || 0,
         change: quote.regularMarketChange || 0,
         changePercent: quote.regularMarketChangePercent || 0,
-        rsi: rsiData.get(symbol)
+        rsi: rsiData.get(symbol),
+        volumeHistory
       });
     } catch (error) {
       console.error(`Error fetching quote for ${symbol}:`, error);
@@ -114,7 +141,8 @@ export async function getStockQuotes(symbols: string[]): Promise<WatchlistItem[]
         volume: 0,
         change: 0,
         changePercent: 0,
-        rsi: rsiData.get(symbol)
+        rsi: rsiData.get(symbol),
+        volumeHistory: []
       });
     }
   }

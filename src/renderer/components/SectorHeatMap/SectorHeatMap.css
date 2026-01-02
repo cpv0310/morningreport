@@ -1,0 +1,123 @@
+.sector-heatmap {
+  padding: 20px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  margin-bottom: 20px;
+}
+
+.sector-heatmap h2 {
+  margin: 0 0 20px 0;
+  font-size: 20px;
+}
+
+.heatmap-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+  padding: 20px 0;
+  min-height: 300px;
+}
+
+.heatmap-cell {
+  position: relative;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+  min-width: 80px;
+  min-height: 80px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.heatmap-cell:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  z-index: 10;
+}
+
+.cell-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  color: white;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+  padding: 10px;
+  text-align: center;
+}
+
+.cell-symbol {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.cell-performance {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.heatmap-legend {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px solid #e9ecef;
+}
+
+.legend-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #495057;
+}
+
+.legend-gradient {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  position: relative;
+  padding: 0 10px;
+}
+
+.legend-gradient::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 20px;
+  background: linear-gradient(to right,
+    hsl(0, 70%, 30%),
+    hsl(0, 70%, 50%),
+    hsl(60, 70%, 50%),
+    hsl(120, 70%, 50%),
+    hsl(120, 70%, 30%)
+  );
+  border-radius: 4px;
+  z-index: 0;
+}
+
+.legend-min,
+.legend-zero,
+.legend-max {
+  font-size: 12px;
+  font-weight: 600;
+  color: white;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.7);
+  z-index: 1;
+  position: relative;
+  padding: 2px 8px;
+}
+
+.sector-heatmap.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  color: #6c757d;
+}

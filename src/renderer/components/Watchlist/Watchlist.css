@@ -54,6 +54,17 @@
   font-weight: 600;
 }
 
+.ticker-link {
+  color: #007bff;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.ticker-link:hover {
+  color: #0056b3;
+  text-decoration: underline;
+}
+
 .remove-button {
   background: #dc3545;
   color: white;

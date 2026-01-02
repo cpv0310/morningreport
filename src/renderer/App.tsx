@@ -1,6 +1,5 @@
 import React from 'react';
-import EconomicEvents from './components/EconomicEvents/EconomicEvents';
-import SectorTable from './components/SectorTable/SectorTable';
+import SectorHeatMap from './components/SectorHeatMap/SectorHeatMap';
 import StockNews from './components/StockNews/StockNews';
 import Watchlist from './components/Watchlist/Watchlist';
 import { useMarketData } from './hooks/useMarketData';
@@ -34,11 +33,10 @@ export default function App() {
 
       <div className="app-content">
         <div className="left-column">
-          <EconomicEvents />
           <StockNews />
         </div>
         <div className="right-column">
-          <SectorTable />
+          <SectorHeatMap />
           <Watchlist />
         </div>
       </div>

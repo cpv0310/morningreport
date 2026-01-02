@@ -1,0 +1,11 @@
+.sparkline {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.sparkline-empty {
+  display: inline-block;
+  width: 100px;
+  text-align: center;
+  color: #6c757d;
+}

@@ -188,6 +188,8 @@ export async function getStockRSI(symbol: string, exchange: string = 'NASDAQ'): 
       }
     });
 
+    console.log(`RSI result for ${symbol}:`, JSON.stringify(result, null, 2));
+
     if (result && result.content && result.content[0]) {
       const data = JSON.parse(result.content[0].text) as CoinAnalysisResult;
       return data.technical_indicators?.rsi || null;
