@@ -14,7 +14,16 @@
       "Bash(npm run dev:*)",
       "Bash(lsof:*)",
       "Bash(xargs kill -9:*)",
-      "Bash(pkill:*)"
+      "Bash(pkill:*)",
+      "Bash(cat:*)",
+      "WebFetch(domain:github.com)",
+      "Bash(claude mcp add --transport stdio tradingview --scope project -- npx -y atilaahmettaner/tradingview-mcp)",
+      "Bash(claude mcp list:*)",
+      "Bash(claude mcp get:*)",
+      "Bash(npx:*)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(claude mcp remove:*)",
+      "Bash(claude mcp add:*)"
     ]
   }
 }

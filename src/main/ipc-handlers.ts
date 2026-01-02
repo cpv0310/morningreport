@@ -1,5 +1,5 @@
 import { ipcMain, BrowserWindow } from 'electron';
-import { getSectorPerformance, getStockQuotes, getEconomicEvents, getMarketNews } from '../services/finnhub';
+import { getSectorPerformance, getStockQuotes, getEconomicEvents, getMarketNews } from '../services/yahoo-finance';
 import { cache } from '../services/cache';
 
 const CACHE_TTL = {

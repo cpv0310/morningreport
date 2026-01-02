@@ -61,6 +61,7 @@ export default function Watchlist() {
             <th>Price</th>
             <th>Change</th>
             <th>Volume</th>
+            <th>RSI (14)</th>
             <th></th>
           </tr>
         </thead>
@@ -73,6 +74,14 @@ export default function Watchlist() {
                 {stock.change >= 0 ? '+' : ''}{stock.change.toFixed(2)} ({stock.changePercent.toFixed(2)}%)
               </td>
               <td>{formatNumber(stock.volume)}</td>
+              <td className={
+                stock.rsi === undefined ? '' :
+                stock.rsi > 70 ? 'rsi-overbought' :
+                stock.rsi < 30 ? 'rsi-oversold' :
+                'rsi-neutral'
+              }>
+                {stock.rsi !== undefined ? stock.rsi.toFixed(2) : '-'}
+              </td>
               <td>
                 <button className="remove-button" onClick={() => removeStock(stock.symbol)}>×</button>
               </td>

@@ -136,3 +136,17 @@
 .modal-buttons button:last-child:hover {
   background: #5a6268;
 }
+
+.rsi-overbought {
+  color: #dc3545;
+  font-weight: 600;
+}
+
+.rsi-oversold {
+  color: #28a745;
+  font-weight: 600;
+}
+
+.rsi-neutral {
+  color: #6c757d;
+}
