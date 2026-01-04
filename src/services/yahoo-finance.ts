@@ -103,6 +103,7 @@ export async function getStockQuotes(symbols: string[]): Promise<WatchlistItem[]
       const endDate = new Date();
 
       let volumeHistory: number[] = [];
+      let priceHistory: number[] = [];
       try {
         const historical: any = await yahooFinance.historical(symbol, {
           period1: startDate,
@@ -112,14 +113,23 @@ export async function getStockQuotes(symbols: string[]): Promise<WatchlistItem[]
         await delay(500);
 
         if (historical && historical.length > 0) {
-          // Get last 5 days of volume, sorted by date
-          volumeHistory = historical
-            .sort((a: any, b: any) => a.date.getTime() - b.date.getTime())
+          // Sort by date
+          const sortedHistory = historical.sort((a: any, b: any) => a.date.getTime() - b.date.getTime());
+
+          // Get last 5 days of volume
+          volumeHistory = sortedHistory
             .slice(-5)
             .map((day: any) => day.volume || 0);
+
+          // Get last 5 days of closing prices
+          priceHistory = sortedHistory
+            .slice(-5)
+            .map((day: any) => day.close || 0);
+
+          console.log(`Price history for ${symbol}:`, priceHistory);
         }
       } catch (histError) {
-        console.error(`Error fetching volume history for ${symbol}:`, histError);
+        console.error(`Error fetching history for ${symbol}:`, histError);
       }
 
       results.push({
@@ -130,7 +140,8 @@ export async function getStockQuotes(symbols: string[]): Promise<WatchlistItem[]
         change: quote.regularMarketChange || 0,
         changePercent: quote.regularMarketChangePercent || 0,
         rsi: rsiData.get(symbol),
-        volumeHistory
+        volumeHistory,
+        priceHistory
       });
     } catch (error) {
       console.error(`Error fetching quote for ${symbol}:`, error);
@@ -142,7 +153,8 @@ export async function getStockQuotes(symbols: string[]): Promise<WatchlistItem[]
         change: 0,
         changePercent: 0,
         rsi: rsiData.get(symbol),
-        volumeHistory: []
+        volumeHistory: [],
+        priceHistory: []
       });
     }
   }

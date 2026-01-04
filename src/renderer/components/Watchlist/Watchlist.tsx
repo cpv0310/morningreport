@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useWatchlist } from '../../hooks/useMarketData';
 import SparkLine from '../SparkLine/SparkLine';
+import BackgroundSparkLine from '../BackgroundSparkLine/BackgroundSparkLine';
 import './Watchlist.css';
 
 export default function Watchlist() {
@@ -55,8 +56,7 @@ export default function Watchlist() {
         <thead>
           <tr>
             <th>Symbol</th>
-            <th>Price</th>
-            <th>Change</th>
+            <th>Price (Change)</th>
             <th>Volume (5d)</th>
             <th>RSI (14)</th>
             <th></th>
@@ -75,9 +75,17 @@ export default function Watchlist() {
                   {stock.symbol}
                 </a>
               </td>
-              <td>{formatPrice(stock.currentPrice)}</td>
-              <td className={stock.change >= 0 ? 'positive' : 'negative'}>
-                {stock.change >= 0 ? '+' : ''}{stock.change.toFixed(2)} ({stock.changePercent.toFixed(2)}%)
+              <td className={`price-change-cell ${stock.change >= 0 ? 'positive' : 'negative'}`}>
+                {stock.priceHistory && stock.priceHistory.length > 0 && (
+                  <BackgroundSparkLine
+                    data={stock.priceHistory}
+                    color={stock.change >= 0 ? '#28a745' : '#dc3545'}
+                    opacity={0.8}
+                  />
+                )}
+                <span className="cell-value">
+                  {formatPrice(stock.currentPrice)} ({stock.change >= 0 ? '+' : ''}{stock.changePercent.toFixed(2)}%)
+                </span>
               </td>
               <td>
                 <SparkLine data={stock.volumeHistory || []} width={100} height={30} />

@@ -14,28 +14,6 @@ interface MCPResponse {
   error?: any;
 }
 
-interface TechnicalIndicators {
-  rsi: number;
-  rsi_signal: string;
-  sma20: number;
-  ema50: number;
-  ema200: number;
-  macd: number;
-  macd_signal: number;
-  macd_divergence: number;
-  adx: number;
-  trend_strength: string;
-  stoch_k: number;
-  stoch_d: number;
-}
-
-interface CoinAnalysisResult {
-  price_data: any;
-  bollinger_analysis: any;
-  technical_indicators: TechnicalIndicators;
-  market_sentiment: any;
-}
-
 let requestId = 0;
 let mcpProcess: any = null;
 let isInitialized = false;
@@ -184,14 +162,21 @@ export async function getStockRSI(symbol: string, exchange: string = 'NASDAQ'): 
       arguments: {
         symbol,
         exchange,
-        timeframe: '1d'
+        timeframe: 'D'
       }
     });
 
     console.log(`RSI result for ${symbol}:`, JSON.stringify(result, null, 2));
 
     if (result && result.content && result.content[0]) {
-      const data = JSON.parse(result.content[0].text) as CoinAnalysisResult;
+      const data = JSON.parse(result.content[0].text);
+
+      // Check for error in response
+      if (data.error) {
+        console.error(`TradingView error for ${symbol}:`, data.error);
+        return null;
+      }
+
       return data.technical_indicators?.rsi || null;
     }
 

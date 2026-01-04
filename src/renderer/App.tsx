@@ -33,11 +33,11 @@ export default function App() {
 
       <div className="app-content">
         <div className="left-column">
-          <StockNews />
+          <Watchlist />
         </div>
         <div className="right-column">
           <SectorHeatMap />
-          <Watchlist />
+          <StockNews />
         </div>
       </div>
 

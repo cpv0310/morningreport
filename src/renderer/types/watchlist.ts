@@ -8,6 +8,7 @@ export interface WatchlistItem {
   changePercent: number;
   rsi?: number;
   volumeHistory?: number[];
+  priceHistory?: number[];
 }
 
 export interface WatchlistData {
