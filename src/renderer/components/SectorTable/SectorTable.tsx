@@ -1,16 +1,27 @@
 import React from 'react';
 import { useMarketData } from '../../hooks/useMarketData';
-import './SectorTable.css';
+import { Card } from '@/components/ui/card';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
 export default function SectorTable() {
   const { marketData, loading } = useMarketData();
 
   if (loading) {
-    return <div className="sector-table loading">Loading sector data...</div>;
+    return (
+      <Card className="p-5 mb-5">
+        <div className="flex items-center justify-center text-muted-foreground italic">
+          Loading sector data...
+        </div>
+      </Card>
+    );
   }
 
   if (!marketData || !marketData.sectors) {
-    return <div className="sector-table">No sector data available</div>;
+    return (
+      <Card className="p-5 mb-5">
+        <div className="text-muted-foreground">No sector data available</div>
+      </Card>
+    );
   }
 
   const formatPercent = (value: number) => {
@@ -19,39 +30,49 @@ export default function SectorTable() {
   };
 
   const getColorClass = (value: number) => {
-    if (value > 0) return 'positive';
-    if (value < 0) return 'negative';
-    return 'neutral';
+    if (value > 0) return 'text-positive';
+    if (value < 0) return 'text-negative';
+    return 'text-neutral';
   };
 
   return (
-    <div className="sector-table">
-      <h2>Sector Performance</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Sector</th>
-            <th>1 Day</th>
-            <th>5 Days</th>
-            <th>10 Days</th>
-            <th>30 Days</th>
-          </tr>
-        </thead>
-        <tbody>
+    <Card className="p-5 mb-5">
+      <h2 className="text-xl font-semibold mb-4">Sector Performance</h2>
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Sector</TableHead>
+            <TableHead>1 Day</TableHead>
+            <TableHead>5 Days</TableHead>
+            <TableHead>10 Days</TableHead>
+            <TableHead>30 Days</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
           {marketData.sectors.map((sector) => (
-            <tr key={sector.symbol}>
-              <td className="sector-name">
-                <span className="sector-symbol">{sector.symbol}</span>
-                <span className="sector-full-name">{sector.name}</span>
-              </td>
-              <td className={getColorClass(sector.day1)}>{formatPercent(sector.day1)}</td>
-              <td className={getColorClass(sector.day5)}>{formatPercent(sector.day5)}</td>
-              <td className={getColorClass(sector.day10)}>{formatPercent(sector.day10)}</td>
-              <td className={getColorClass(sector.day30)}>{formatPercent(sector.day30)}</td>
-            </tr>
+            <TableRow key={sector.symbol}>
+              <TableCell>
+                <div className="flex flex-col gap-0.5">
+                  <span className="font-semibold text-sm">{sector.symbol}</span>
+                  <span className="text-xs text-muted-foreground">{sector.name}</span>
+                </div>
+              </TableCell>
+              <TableCell className={`font-semibold ${getColorClass(sector.day1)}`}>
+                {formatPercent(sector.day1)}
+              </TableCell>
+              <TableCell className={`font-semibold ${getColorClass(sector.day5)}`}>
+                {formatPercent(sector.day5)}
+              </TableCell>
+              <TableCell className={`font-semibold ${getColorClass(sector.day10)}`}>
+                {formatPercent(sector.day10)}
+              </TableCell>
+              <TableCell className={`font-semibold ${getColorClass(sector.day30)}`}>
+                {formatPercent(sector.day30)}
+              </TableCell>
+            </TableRow>
           ))}
-        </tbody>
-      </table>
-    </div>
+        </TableBody>
+      </Table>
+    </Card>
   );
 }

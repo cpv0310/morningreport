@@ -3,7 +3,7 @@ import * as d3 from 'd3';
 import { useMarketData } from '../../hooks/useMarketData';
 import { SectorConstituentsData } from '../../types/market';
 import SectorPopup from '../SectorPopup/SectorPopup';
-import './SectorHeatMap.css';
+import { Card } from '@/components/ui/card';
 
 export default function SectorHeatMap() {
   const { marketData, loading } = useMarketData();
@@ -151,25 +151,40 @@ export default function SectorHeatMap() {
   }, [marketData]);
 
   if (loading) {
-    return <div className="sector-heatmap loading">Loading sector data...</div>;
+    return (
+      <Card className="p-5 mb-5">
+        <div className="flex items-center justify-center text-muted-foreground italic">
+          Loading sector data...
+        </div>
+      </Card>
+    );
   }
 
   if (!marketData || !marketData.sectors) {
-    return <div className="sector-heatmap">No sector data available</div>;
+    return (
+      <Card className="p-5 mb-5">
+        <div className="text-muted-foreground">No sector data available</div>
+      </Card>
+    );
   }
 
   return (
-    <div className="sector-heatmap">
-      <h2>Sector Performance Heat Map</h2>
-      <div className="heatmap-container-d3">
-        <svg ref={svgRef}></svg>
+    <Card className="p-5 mb-5">
+      <h2 className="text-xl font-semibold mb-5">Sector Performance Heat Map</h2>
+      <div className="w-full h-[800px]">
+        <svg ref={svgRef} className="block w-full h-full"></svg>
       </div>
-      <div className="heatmap-legend">
-        <span className="legend-label">Daily Performance:</span>
-        <div className="legend-gradient">
-          <span className="legend-min">-1%</span>
-          <span className="legend-zero">0%</span>
-          <span className="legend-max">+1%</span>
+      <div className="flex items-center justify-center gap-4 mt-5 pt-4 border-t border-border">
+        <span className="text-sm font-semibold text-foreground">Daily Performance:</span>
+        <div className="flex items-center gap-2 relative px-2">
+          <span className="text-xs">-1%</span>
+          <div
+            className="w-48 h-4 rounded"
+            style={{
+              background: 'linear-gradient(to right, #dc3545, #f8f9fa, #28a745)'
+            }}
+          ></div>
+          <span className="text-xs">+1%</span>
         </div>
       </div>
       <SectorPopup
@@ -177,6 +192,6 @@ export default function SectorHeatMap() {
         position={popupPosition}
         visible={popupVisible}
       />
-    </div>
+    </Card>
   );
 }

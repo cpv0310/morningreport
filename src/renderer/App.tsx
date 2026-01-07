@@ -4,7 +4,10 @@ import StockNews from './components/StockNews/StockNews';
 import Watchlist from './components/Watchlist/Watchlist';
 import WorldMarkets from './components/WorldMarkets/WorldMarkets';
 import { useMarketData } from './hooks/useMarketData';
-import './styles/App.css';
+import { ThemeProvider } from './components/ThemeProvider';
+import { ThemeToggle } from './components/ThemeToggle';
+import { Button } from '@/components/ui/button';
+import './styles/global.css';
 
 export default function App() {
   const { marketData, loading, error, refresh } = useMarketData();
@@ -15,39 +18,40 @@ export default function App() {
   };
 
   return (
-    <div className="app">
-      <header className="app-header">
-        <h1>Morning Stock Market Report</h1>
-        <div className="header-controls">
-          <span className="last-updated">Last updated: {formatLastUpdated()}</span>
-          <button className="refresh-button" onClick={refresh} disabled={loading}>
-            {loading ? 'Loading...' : 'Refresh'}
-          </button>
-        </div>
-      </header>
+    <ThemeProvider defaultTheme="light" storageKey="morningreport-ui-theme">
+      <div className="flex flex-col h-screen bg-background">
+        <header className="bg-slate-900 dark:bg-slate-950 text-white px-8 py-5 flex justify-between items-center shadow-md">
+          <h1 className="text-2xl font-semibold m-0">Morning Stock Market Report</h1>
+          <div className="flex items-center gap-5">
+            <span className="text-sm text-slate-300">Last updated: {formatLastUpdated()}</span>
+            <ThemeToggle />
+            <Button onClick={refresh} disabled={loading} variant="default">
+              {loading ? 'Loading...' : 'Refresh'}
+            </Button>
+          </div>
+        </header>
 
-      {error && (
-        <div className="error-banner">
-          Error: {error}
-        </div>
-      )}
+        {error && (
+          <div className="bg-destructive text-destructive-foreground py-4 px-8 text-center">
+            Error: {error}
+          </div>
+        )}
 
-      <div className="app-content">
-        <div className="left-column">
-          <WorldMarkets />
+        <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-5 p-5 overflow-y-auto">
+          <div className="flex flex-col">
+            <Watchlist />
+            <WorldMarkets />
+          </div>
+          <div className="flex flex-col">
+            <SectorHeatMap />
+            <StockNews />
+          </div>
         </div>
-        <div className="center-column">
-          <Watchlist />
-        </div>
-        <div className="right-column">
-          <SectorHeatMap />
-          <StockNews />
-        </div>
+
+        <footer className="bg-slate-900 dark:bg-slate-950 text-slate-400 py-4 px-8 text-center">
+          <p className="text-xs m-0">Data provided by Finnhub</p>
+        </footer>
       </div>
-
-      <footer className="app-footer">
-        <p>Data provided by Finnhub</p>
-      </footer>
-    </div>
+    </ThemeProvider>
   );
 }

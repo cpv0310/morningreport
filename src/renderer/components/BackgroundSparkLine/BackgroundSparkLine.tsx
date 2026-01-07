@@ -1,5 +1,4 @@
 import React from 'react';
-import './BackgroundSparkLine.css';
 
 interface BackgroundSparkLineProps {
   data: number[];
@@ -30,9 +29,9 @@ export default function BackgroundSparkLine({
 
   console.log(`BackgroundSparkLine: Rendering with ${data.length} points, range: ${min} - ${max}`);
 
-  const width = 100;
-  const height = 100;
-  const padding = 5;
+  const width = 200;
+  const height = 40;
+  const padding = 2;
   const availableHeight = height - padding * 2;
   const availableWidth = width - padding * 2;
   const stepX = availableWidth / (data.length - 1);
@@ -72,7 +71,7 @@ export default function BackgroundSparkLine({
       <path
         d={linePath}
         stroke={color}
-        strokeWidth="4"
+        strokeWidth="2"
         fill="none"
         opacity={opacity}
         strokeLinecap="round"

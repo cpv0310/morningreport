@@ -1,5 +1,4 @@
 import React from 'react';
-import './SparkLine.css';
 
 interface SparkLineProps {
   data: number[];

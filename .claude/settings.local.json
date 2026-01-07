@@ -30,7 +30,9 @@
       "Bash(sh)",
       "WebSearch",
       "WebFetch(domain:financeflowapi.com)",
-      "Bash(uv cache clean:*)"
+      "Bash(uv cache clean:*)",
+      "Bash(ls:*)",
+      "Bash(git checkout:*)"
     ]
   },
   "enableAllProjectMcpServers": true,
