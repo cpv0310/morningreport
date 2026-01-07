@@ -5,9 +5,12 @@ export interface MarketAPI {
   onEconomicEventsUpdated: (callback: (data: any) => void) => () => void;
   onStockNewsUpdated: (callback: (data: any) => void) => () => void;
   onWatchlistDataUpdated: (callback: (data: any) => void) => () => void;
+  onSectorConstituentsUpdated: (callback: (data: any) => void) => () => void;
+  onWorldMarketsUpdated: (callback: (data: any) => void) => () => void;
   onFetchError: (callback: (error: string) => void) => () => void;
   fetchAllData: () => void;
   fetchWatchlistData: (tickers: string[]) => void;
+  fetchSectorConstituents: (sectorSymbol: string) => void;
   addWatchlistStock: (ticker: string) => void;
   removeWatchlistStock: (ticker: string) => void;
 }
@@ -33,6 +36,16 @@ const marketAPI: MarketAPI = {
     ipcRenderer.on('watchlist-data:updated', subscription);
     return () => ipcRenderer.removeListener('watchlist-data:updated', subscription);
   },
+  onSectorConstituentsUpdated: (callback) => {
+    const subscription = (_event: IpcRendererEvent, data: any) => callback(data);
+    ipcRenderer.on('sector-constituents:updated', subscription);
+    return () => ipcRenderer.removeListener('sector-constituents:updated', subscription);
+  },
+  onWorldMarketsUpdated: (callback) => {
+    const subscription = (_event: IpcRendererEvent, data: any) => callback(data);
+    ipcRenderer.on('world-markets:updated', subscription);
+    return () => ipcRenderer.removeListener('world-markets:updated', subscription);
+  },
   onFetchError: (callback) => {
     const subscription = (_event: IpcRendererEvent, error: string) => callback(error);
     ipcRenderer.on('fetch-error', subscription);
@@ -40,6 +53,7 @@ const marketAPI: MarketAPI = {
   },
   fetchAllData: () => ipcRenderer.send('fetch-all-data'),
   fetchWatchlistData: (tickers: string[]) => ipcRenderer.send('fetch-watchlist-data', tickers),
+  fetchSectorConstituents: (sectorSymbol: string) => ipcRenderer.send('fetch-sector-constituents', sectorSymbol),
   addWatchlistStock: (ticker: string) => ipcRenderer.send('add-watchlist-stock', ticker),
   removeWatchlistStock: (ticker: string) => ipcRenderer.send('remove-watchlist-stock', ticker)
 };

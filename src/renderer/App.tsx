@@ -2,6 +2,7 @@ import React from 'react';
 import SectorHeatMap from './components/SectorHeatMap/SectorHeatMap';
 import StockNews from './components/StockNews/StockNews';
 import Watchlist from './components/Watchlist/Watchlist';
+import WorldMarkets from './components/WorldMarkets/WorldMarkets';
 import { useMarketData } from './hooks/useMarketData';
 import './styles/App.css';
 
@@ -33,6 +34,9 @@ export default function App() {
 
       <div className="app-content">
         <div className="left-column">
+          <WorldMarkets />
+        </div>
+        <div className="center-column">
           <Watchlist />
         </div>
         <div className="right-column">

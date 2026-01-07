@@ -1,5 +1,5 @@
 import YahooFinance from 'yahoo-finance2';
-import { SectorData } from '../renderer/types/market';
+import { SectorData, ETFConstituent, SectorConstituentsData, WorldMarketIndex } from '../renderer/types/market';
 import { EconomicEvent } from '../renderer/types/events';
 import { NewsArticle } from '../renderer/types/news';
 import { WatchlistItem } from '../renderer/types/watchlist';
@@ -20,6 +20,15 @@ const SECTOR_ETFS = [
   { symbol: 'XLY', name: 'Consumer Discretionary' },
   { symbol: 'XLP', name: 'Consumer Staples' },
   { symbol: 'XLI', name: 'Industrials' }
+];
+
+const WORLD_INDICES = [
+  { symbol: '^N225', name: 'Nikkei 225' },
+  { symbol: '^NSEI', name: 'Nifty 50' },
+  { symbol: '^SSEC', name: 'Shanghai' },
+  { symbol: '^FTSE', name: 'FTSE 100' },
+  { symbol: '^GDAXI', name: 'DAX' },
+  { symbol: '^STOXX', name: 'STOXX 600' }
 ];
 
 function delay(ms: number): Promise<void> {
@@ -192,4 +201,131 @@ export async function getMarketNews(): Promise<NewsArticle[]> {
     console.error('Error fetching market news:', error);
     return [];
   }
+}
+
+export async function getETFConstituents(etfSymbol: string): Promise<SectorConstituentsData> {
+  try {
+    console.log(`Fetching constituents for ${etfSymbol}...`);
+
+    // Step 1: Get ETF holdings using quoteSummary
+    const summary: any = await yahooFinance.quoteSummary(etfSymbol, {
+      modules: ['topHoldings']
+    });
+
+    if (!summary.topHoldings || !summary.topHoldings.holdings) {
+      throw new Error(`No holdings data available for ${etfSymbol}`);
+    }
+
+    // Step 2: Extract top 10 holdings (or all if less than 10)
+    const holdings = summary.topHoldings.holdings.slice(0, 10);
+    const constituents: ETFConstituent[] = [];
+
+    // Step 3: Fetch current quotes for all holdings
+    for (const holding of holdings) {
+      try {
+        const quote: any = await yahooFinance.quote(holding.symbol);
+        await delay(300); // Rate limiting
+
+        constituents.push({
+          symbol: holding.symbol,
+          holdingName: holding.holdingName,
+          holdingPercent: holding.holdingPercent * 100, // Convert to percentage
+          currentPrice: quote.regularMarketPrice || 0,
+          change: quote.regularMarketChange || 0,
+          changePercent: quote.regularMarketChangePercent || 0
+        });
+      } catch (err) {
+        console.error(`Error fetching quote for ${holding.symbol}:`, err);
+        // Still add the holding with basic info
+        constituents.push({
+          symbol: holding.symbol,
+          holdingName: holding.holdingName,
+          holdingPercent: holding.holdingPercent * 100
+        });
+      }
+    }
+
+    // Step 4: Find top and bottom performers
+    const validConstituents = constituents.filter(c => c.changePercent !== undefined);
+    let topPerformer: ETFConstituent | undefined;
+    let bottomPerformer: ETFConstituent | undefined;
+
+    if (validConstituents.length > 0) {
+      topPerformer = validConstituents.reduce((prev, current) =>
+        (current.changePercent || 0) > (prev.changePercent || 0) ? current : prev
+      );
+      bottomPerformer = validConstituents.reduce((prev, current) =>
+        (current.changePercent || 0) < (prev.changePercent || 0) ? current : prev
+      );
+    }
+
+    return {
+      sectorSymbol: etfSymbol,
+      sectorName: SECTOR_ETFS.find(s => s.symbol === etfSymbol)?.name || etfSymbol,
+      holdings: constituents,
+      topPerformer,
+      bottomPerformer,
+      lastUpdated: new Date()
+    };
+
+  } catch (error) {
+    console.error(`Error fetching constituents for ${etfSymbol}:`, error);
+    throw error;
+  }
+}
+
+export async function getWorldMarkets(): Promise<WorldMarketIndex[]> {
+  const results: WorldMarketIndex[] = [];
+  const startDate = subDays(new Date(), 7);
+  const endDate = new Date();
+
+  for (const index of WORLD_INDICES) {
+    try {
+      // Get current quote
+      const quote: any = await yahooFinance.quote(index.symbol);
+      await delay(500);
+
+      // Get historical data for sparkline
+      let priceHistory: number[] = [];
+      try {
+        const historical: any = await yahooFinance.historical(index.symbol, {
+          period1: startDate,
+          period2: endDate,
+          interval: '1d'
+        });
+        await delay(500);
+
+        if (historical && historical.length > 0) {
+          const sortedHistory = historical.sort((a: any, b: any) =>
+            a.date.getTime() - b.date.getTime()
+          );
+          priceHistory = sortedHistory.slice(-5).map((day: any) => day.close || 0);
+        }
+      } catch (histError) {
+        console.error(`Error fetching history for ${index.symbol}:`, histError);
+      }
+
+      results.push({
+        symbol: index.symbol,
+        name: index.name,
+        currentPrice: quote.regularMarketPrice || 0,
+        change: quote.regularMarketChange || 0,
+        changePercent: quote.regularMarketChangePercent || 0,
+        priceHistory
+      });
+
+    } catch (error) {
+      console.error(`Error fetching data for ${index.symbol}:`, error);
+      results.push({
+        symbol: index.symbol,
+        name: index.name,
+        currentPrice: 0,
+        change: 0,
+        changePercent: 0,
+        priceHistory: []
+      });
+    }
+  }
+
+  return results;
 }

@@ -1,11 +1,28 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import * as d3 from 'd3';
 import { useMarketData } from '../../hooks/useMarketData';
+import { SectorConstituentsData } from '../../types/market';
+import SectorPopup from '../SectorPopup/SectorPopup';
 import './SectorHeatMap.css';
 
 export default function SectorHeatMap() {
   const { marketData, loading } = useMarketData();
   const svgRef = useRef<SVGSVGElement>(null);
+  const [popupData, setPopupData] = useState<SectorConstituentsData | null>(null);
+  const [popupPosition, setPopupPosition] = useState({ x: 0, y: 0 });
+  const [popupVisible, setPopupVisible] = useState(false);
+  const [hoveredSector, setHoveredSector] = useState<string | null>(null);
+
+  useEffect(() => {
+    const unsubscribe = window.marketAPI.onSectorConstituentsUpdated((result) => {
+      if (result.sectorSymbol === hoveredSector) {
+        setPopupData(result.data);
+        setPopupVisible(true);
+      }
+    });
+
+    return unsubscribe;
+  }, [hoveredSector]);
 
   useEffect(() => {
     if (!marketData || !marketData.sectors || !svgRef.current) return;
@@ -76,18 +93,28 @@ export default function SectorHeatMap() {
       .attr('stroke-width', 2)
       .attr('rx', 4)
       .style('cursor', 'pointer')
-      .on('mouseover', function() {
+      .on('mouseover', function(_event: any, d: any) {
+        const rect = (this as SVGRectElement).getBoundingClientRect();
+        setPopupPosition({
+          x: rect.left + rect.width / 2,
+          y: rect.top
+        });
+        setHoveredSector(d.data.name);
+        window.marketAPI.fetchSectorConstituents(d.data.name);
+
         d3.select(this)
           .attr('stroke', '#000')
           .attr('stroke-width', 3);
       })
       .on('mouseout', function() {
+        setPopupVisible(false);
+        setPopupData(null);
+        setHoveredSector(null);
+
         d3.select(this)
           .attr('stroke', '#fff')
           .attr('stroke-width', 2);
-      })
-      .append('title')
-      .text((d: any) => `${d.data.fullName}\n${d.data.performance >= 0 ? '+' : ''}${d.data.performance.toFixed(2)}%`);
+      });
 
     // Add text - symbol
     cell.append('text')
@@ -145,6 +172,11 @@ export default function SectorHeatMap() {
           <span className="legend-max">+1%</span>
         </div>
       </div>
+      <SectorPopup
+        data={popupData}
+        position={popupPosition}
+        visible={popupVisible}
+      />
     </div>
   );
 }

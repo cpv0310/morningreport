@@ -1,0 +1,72 @@
+.sector-popup {
+  position: fixed;
+  background: white;
+  border: 2px solid #1a1a2e;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  min-width: 300px;
+  pointer-events: none;
+}
+
+.sector-popup h3 {
+  margin: 0 0 12px 0;
+  font-size: 16px;
+  color: #1a1a2e;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 8px;
+}
+
+.performer {
+  margin-bottom: 12px;
+}
+
+.performer .label {
+  display: block;
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 4px;
+}
+
+.stock-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.stock-info .symbol {
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.stock-info .name {
+  font-size: 12px;
+  color: #666;
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.stock-info .change {
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.stock-info .change.positive {
+  color: #28a745;
+}
+
+.stock-info .change.negative {
+  color: #dc3545;
+}
+
+.holdings-summary {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #ddd;
+  font-size: 11px;
+  color: #999;
+  text-align: center;
+}

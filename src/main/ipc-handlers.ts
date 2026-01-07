@@ -1,5 +1,5 @@
 import { ipcMain, BrowserWindow } from 'electron';
-import { getSectorPerformance, getStockQuotes, getMarketNews } from '../services/yahoo-finance';
+import { getSectorPerformance, getStockQuotes, getMarketNews, getETFConstituents, getWorldMarkets } from '../services/yahoo-finance';
 import { getEconomicEvents } from '../services/fmp';
 import { cache } from '../services/cache';
 
@@ -7,7 +7,9 @@ const CACHE_TTL = {
   SECTORS: 24 * 60 * 60 * 1000,
   EVENTS: 24 * 60 * 60 * 1000,
   NEWS: 60 * 60 * 1000,
-  WATCHLIST: 5 * 60 * 1000
+  WATCHLIST: 5 * 60 * 1000,
+  CONSTITUENTS: 24 * 60 * 60 * 1000,
+  WORLD_MARKETS: 5 * 60 * 1000
 };
 
 export function setupIpcHandlers(mainWindow: BrowserWindow): void {
@@ -48,6 +50,17 @@ export function setupIpcHandlers(mainWindow: BrowserWindow): void {
         lastUpdated: new Date()
       });
 
+      let worldMarkets = cache.get('worldMarkets');
+      if (!worldMarkets) {
+        console.log('Fetching world markets...');
+        worldMarkets = await getWorldMarkets();
+        cache.set('worldMarkets', worldMarkets, CACHE_TTL.WORLD_MARKETS);
+      }
+      mainWindow.webContents.send('world-markets:updated', {
+        indices: worldMarkets,
+        lastUpdated: new Date()
+      });
+
       console.log('All data fetched successfully');
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -76,6 +89,29 @@ export function setupIpcHandlers(mainWindow: BrowserWindow): void {
 
   ipcMain.on('remove-watchlist-stock', (_event, ticker: string) => {
     console.log('Stock removed from watchlist:', ticker);
+  });
+
+  ipcMain.on('fetch-sector-constituents', async (_event, sectorSymbol: string) => {
+    console.log('Fetching constituents for:', sectorSymbol);
+
+    try {
+      const cacheKey = `sector_constituents_${sectorSymbol}`;
+      let constituents = cache.get(cacheKey);
+
+      if (!constituents) {
+        console.log('Cache miss, fetching from API...');
+        constituents = await getETFConstituents(sectorSymbol);
+        cache.set(cacheKey, constituents, CACHE_TTL.CONSTITUENTS);
+      }
+
+      mainWindow.webContents.send('sector-constituents:updated', {
+        sectorSymbol,
+        data: constituents
+      });
+    } catch (error) {
+      console.error('Error fetching sector constituents:', error);
+      mainWindow.webContents.send('fetch-error', (error as Error).message);
+    }
   });
 
   setTimeout(() => {

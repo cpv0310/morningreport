@@ -5,13 +5,22 @@ import BackgroundSparkLine from '../BackgroundSparkLine/BackgroundSparkLine';
 import './Watchlist.css';
 
 export default function Watchlist() {
-  const { watchlistData, loading, addStock, removeStock } = useWatchlist();
+  const { watchlistData, loading, addStock, addMultipleStocks, removeStock } = useWatchlist();
   const [newTicker, setNewTicker] = useState('');
   const [showAddModal, setShowAddModal] = useState(false);
 
   const handleAddStock = () => {
     if (newTicker.trim()) {
-      addStock(newTicker.trim());
+      // Split by spaces and filter out empty strings
+      const tickers = newTicker.trim().split(/\s+/).filter(t => t.length > 0);
+
+      // Add stocks (single or multiple)
+      if (tickers.length === 1) {
+        addStock(tickers[0]);
+      } else if (tickers.length > 1) {
+        addMultipleStocks(tickers);
+      }
+
       setNewTicker('');
       setShowAddModal(false);
     }
@@ -38,7 +47,7 @@ export default function Watchlist() {
             <h3>Add Stock to Watchlist</h3>
             <input
               type="text"
-              placeholder="Enter ticker symbol (e.g., AAPL)"
+              placeholder="Enter ticker symbols separated by spaces (e.g., AAPL MSFT GOOGL)"
               value={newTicker}
               onChange={(e) => setNewTicker(e.target.value.toUpperCase())}
               onKeyPress={(e) => e.key === 'Enter' && handleAddStock()}
